@@ -1,65 +1,54 @@
-# snikket-selfhosted
+Корпоративный мессенджер на Snikket/XMPP
+Готовый стенд безопасного мессенджера с шифрованием OMEMO и видеозвонками. Развёртывание в изолированной сети за 10 минут.
 
-This repository includes some helpful scripts and templates
-for setting up and managing a Snikket service, as an alternative to the
-official [Snikket setup guide](https://snikket.org/quickstart).
+Что внутри
+Полная инфраструктура Snikket в Docker (4 сервиса)
 
-If you use the scripts here, feel free to send us feedback or contributions to
-help improve them!
+Готовые скрипты управления для администрирования
 
-**Note:** These scripts now require Docker Compose V2, and won't work with the
-V1 'docker-compose' command that some servers may still have installed. If you
-need to upgrade, follow [Docker's installation guide for Compose V2](https://docs.docker.com/compose/install/linux/#install-using-the-repository).
+Настройка для локального использования (без внешних сертификатов)
 
-## Setup instructions
+Автоматизация рутинных задач через Bash-скрипты
 
-Before you begin, you need to follow Step 1 (DNS) and Step 2
-(Docker) from the [Quickstart](https://snikket.org/service/quickstart/)
-tutorial.
+Быстрый старт
 
-Instead of Step 3 in the quickstart, you can follow the instructions
-here.
+git clone [ссылка-на-репозиторий]
+cd snikket-xmpp
+sudo ./scripts/start.sh
+sudo ./scripts/add-user.sh
 
-Don't forget to run the commands as root (log in as root or use sudo).
+Скрипты управления
 
-### Step 1: Fetch the source
+start.sh / stop.sh	Запуск и остановка сервиса
+update.sh	Обновление всех компонентов
+backup.sh / restore.sh	Резервное копирование и восстановление
+cert-refresh.sh	Обновление SSL-сертификатов
+new-invite.sh	Генерация приглашений для пользователей
+set-channel.sh	Смена версионного канала
+add-user.sh	Добавление новых пользователей
 
-```
-cd /opt
-git clone https://github.com/snikket-im/snikket-selfhosted snikket
-```
+Технологии
+Snikket/XMPP - децентрализованный мессенджер
 
-### Step 2: Configure
+Docker Compose - оркестрация 4 сервисов
 
-An automatic configuration script is included:
+OMEMO encryption - сквозное шифрование
 
-```
-cd snikket
-./scripts/init.sh
-```
+WebRTC - аудио/видеозвонки
 
-### Step 3: Start!
+Bash-скрипты - автоматизация управления
 
-```
-./scripts/start.sh
-```
+Архитектура
+yaml
+services:
+  snikket_proxy:    # Веб-прокси и статика
+  snikket_certs:    # Управление сертификатами  
+  snikket_portal:   # Веб-интерфейс управления
+  snikket_server:   # Основной XMPP-сервер
 
-Check that your Snikket login page loads at `http://<your domain>/`
-(it will redirect to HTTPS once certificates are available).
+Для продакшена
+Настроить доменное имя и HTTPS
 
-### Step 4: Create an admin account
+Заменить самоподписанные сертификаты
 
-To create your first account, create an invitation with:
-
-```
-./scripts/new-invite.sh --admin --group default
-```
-
-Open the link in a browser. If you are on a desktop, you can use
-tap the "Not on mobile?" button to display a QR code that can be
-scanned with your mobile device.
-
-During the account creation process you will choose a username and
-password. Your Snikket address will be `<your username>@<your domain>`.
-You can use this address and password to log into the web administration
-page for the service.
+Настроить TURN-сервер для NAT
